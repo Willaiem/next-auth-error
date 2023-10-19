@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  OWNER
+  REDAKTOR
+  CZYTELNIK
+}
+
+enum Status {
+  APPROVED
+  WAITING
+  DENIED
+}
+
+model Class {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  shortcut  String
+  users     User[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  firstName      String
+  lastName       String
+  hashedPassword String
+  role           Role      @default(CZYTELNIK)
+  accountStatus  Status    @default(WAITING)
+  class          Class     @relation(fields: [classId], references: [id])
+  classId        String    @db.ObjectId
+  articles       Article[] @relation(fields: [articleIds], references: [id])
+  articleIds     String[]  @db.ObjectId
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model Article {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  authors        User[]   @relation(fields: [authorIds], references: [id])
+  authorIds      String[] @db.ObjectId
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  articleUrl     String
+  articleContent String
+}

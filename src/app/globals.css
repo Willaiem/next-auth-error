@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .nav-link {
+        @apply hover:text-zse-main hover:duration-200;
+    }
+    .nav-active {
+        @apply text-zse-main;
+    }
+}
